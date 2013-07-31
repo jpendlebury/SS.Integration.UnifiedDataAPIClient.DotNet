@@ -1,21 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Globalization;
 using System.Linq;
 using System.Reactive;
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.UI.WebControls;
 using log4net;
-using log4net.Repository.Hierarchy;
 using Newtonsoft.Json.Linq;
-using RabbitMQ.Client;
-using RabbitMQ.Client.Events;
 using SportingSolutions.Udapi.Sdk.Clients;
 using SportingSolutions.Udapi.Sdk.Events;
 using SportingSolutions.Udapi.Sdk.Extensions;
@@ -88,8 +78,8 @@ namespace SportingSolutions.Udapi.Sdk
 
             StreamSubscriber.StartStream(this, _observer);
 
-            EchoSender.StartEcho(PostEcho, GetQueueDetails());
-            StartEcho();
+            //EchoSender.StartEcho(PostEcho, GetQueueDetails());
+            //StartEcho();
         }
 
         public static int GetSequenceFromStreamUpdate(string update)

@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reactive.Concurrency;
 using System.Reactive.Linq;
 using System.Reactive.Subjects;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web;
 using log4net;
 using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
@@ -18,6 +14,7 @@ using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
 using SportingSolutions.Udapi.Sdk.Interfaces;
 using SportingSolutions.Udapi.Sdk.Model;
+using SS.Integration.Common;
 
 namespace SportingSolutions.Udapi.Sdk
 {
@@ -126,9 +123,9 @@ namespace SportingSolutions.Udapi.Sdk
 
         public static void SubscribeToEchoStream(IObserver<string> subscriber)
         {
-            _updateStream.Where(x => x != null && x.IsEcho).Select(x => x.Message).ObserveOn(Scheduler.Default).Subscribe(subscriber);
+            //_updateStream.Where(x => x != null && x.IsEcho).Select(x => x.Message).ObserveOn(Scheduler.Default).Subscribe(subscriber);
             
-            (_updateStream as IConnectableObservable<IFixtureUpdate>).Connect();
+            //(_updateStream as IConnectableObservable<IFixtureUpdate>).Connect();
         }
 
         private static void StartStreaming()
@@ -162,6 +159,8 @@ namespace SportingSolutions.Udapi.Sdk
                     {
                         fixtureStreamUpdate.Message = jobject["Content"].Value<String>();
                         fixtureStreamUpdate.IsEcho = true;
+
+                        IncrementPerformanceCounter.IncreaseCounter("Udapi SDK Received Echos");
                     }
                     else
                     {
