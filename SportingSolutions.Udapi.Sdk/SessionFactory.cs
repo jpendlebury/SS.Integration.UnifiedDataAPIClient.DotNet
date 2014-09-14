@@ -15,6 +15,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Configuration;
 using SportingSolutions.Udapi.Sdk.Clients;
 using SportingSolutions.Udapi.Sdk.Interfaces;
 using ICredentials = SportingSolutions.Udapi.Sdk.Interfaces.ICredentials;
@@ -36,6 +37,12 @@ namespace SportingSolutions.Udapi.Sdk
 
         public static ISession CreateSession(Uri serverUri, ICredentials credentials)
         {
+            var t = ConfigurationManager.AppSettings["sdk.timeout"] ?? "60000";
+            return CreateSession(serverUri, credentials, Convert.ToInt32(t));
+        }
+
+        public static ISession CreateSession(Uri serverUri, ICredentials credentials, int timeout)
+        {
             if (_sessionFactory == null)
             {
                 lock (SessionFactoryLock)
@@ -44,12 +51,12 @@ namespace SportingSolutions.Udapi.Sdk
                     {
                         _sessionFactory = new SessionFactory();
                     }
-                }    
+                }
             }
-            return _sessionFactory.GetSession(serverUri, credentials);
+            return _sessionFactory.GetSession(serverUri, credentials, timeout);
         }
 
-        private ISession GetSession(Uri serverUri, ICredentials credentials)
+        private ISession GetSession(Uri serverUri, ICredentials credentials, int timeout)
         {
             lock (SessionLock)
             {
@@ -57,7 +64,7 @@ namespace SportingSolutions.Udapi.Sdk
                 var sessionExists = _sessions.TryGetValue(serverUri + credentials.UserName, out session);
                 if (!sessionExists)
                 {
-                    var connectClient = new ConnectClient(new Configuration(serverUri), new Clients.Credentials(credentials.UserName, credentials.Password));
+                    var connectClient = new ConnectClient(new Clients.Configuration(serverUri, "application/json", timeout, true), new Clients.Credentials(credentials.UserName, credentials.Password));
                     session = new Session(connectClient);
                     _sessions.Add(serverUri + credentials.UserName, session);
                 }
