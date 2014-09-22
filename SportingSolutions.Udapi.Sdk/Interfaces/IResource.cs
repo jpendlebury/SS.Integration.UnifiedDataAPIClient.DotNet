@@ -35,5 +35,6 @@ namespace SportingSolutions.Udapi.Sdk.Interfaces
         event EventHandler StreamDisconnected;
         event EventHandler<StreamEventArgs> StreamEvent;
         event EventHandler StreamSynchronizationError;
+        event EventHandler<EchoReceivedArgs> EchoReceived;
     }
 }
