@@ -58,6 +58,7 @@ namespace SportingSolutions.Udapi.Sdk
         public event EventHandler StreamDisconnected;
         public event EventHandler<StreamEventArgs> StreamEvent;
         public event EventHandler StreamSynchronizationError;
+        public event EventHandler<EchoReceivedArgs> EchoReceived;
 
         internal Resource(RestItem restItem, IConnectClient connectClient, StreamController streamController)
             : base(restItem, connectClient)
@@ -235,6 +236,11 @@ namespace SportingSolutions.Udapi.Sdk
             var roundMillis = roundTripTime.TotalMilliseconds;
 
             EchoRoundTripInMilliseconds = roundMillis;
+
+            if (EchoReceived != null)
+            {
+                HandleExceptionAndLog(() => EchoReceived(this, new EchoReceivedArgs(Id, Name)), "Error occured when processing EchoReceived event");
+            }
 
             Logger.DebugFormat("Echo recieved for fixtureId={0} fixtureName=\"{1}\"", Id, Name);
         }
