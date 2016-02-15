@@ -34,6 +34,7 @@ namespace SportingSolutions.Udapi.Sdk
         public event EventHandler StreamConnected;
         public event EventHandler StreamDisconnected;
         public event EventHandler<StreamEventArgs> StreamEvent;
+        public event EventHandler<EchoReceivedArgs> EchoReceived;
 
         [Obsolete]
         public event EventHandler StreamSynchronizationError;
@@ -136,6 +137,12 @@ namespace SportingSolutions.Udapi.Sdk
         {
             if (StreamEvent != null)
                 StreamEvent(this, e);
+        }
+
+        public virtual void OnEchoReceived(EchoReceivedArgs e)
+        {
+            if (EchoReceived != null)
+                EchoReceived(this,e);
         }
 
         public QueueDetails GetQueueDetails()

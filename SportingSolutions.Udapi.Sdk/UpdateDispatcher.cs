@@ -19,6 +19,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using log4net;
 using SportingSolutions.Udapi.Sdk.Events;
+using SportingSolutions.Udapi.Sdk.Extensions;
 using SportingSolutions.Udapi.Sdk.Interfaces;
 
 namespace SportingSolutions.Udapi.Sdk
@@ -255,17 +256,6 @@ namespace SportingSolutions.Udapi.Sdk
             if (string.IsNullOrEmpty(consumerId) || string.IsNullOrEmpty(message))
                 return false;
 
-            // is this an echo message?
-            if (message.StartsWith("{\"Relation\":\"http://api.sportingsolutions.com/rels/stream/echo\""))
-            {
-                EchoManager.ProcessEcho(consumerId);
-                return true;
-            }
-
-
-            if (UDAPI.Configuration.VerboseLogging)
-                _logger.DebugFormat("Update arrived for consumerId={0}", consumerId);
-
             // note that TryGetValue is lock-free
             ConsumerQueue c = null;
             if (!_subscribers.TryGetValue(consumerId, out c) || c == null)
@@ -273,10 +263,24 @@ namespace SportingSolutions.Udapi.Sdk
                 _logger.WarnFormat("Update not dispatched to consumerId={0} as it was not found", consumerId);
                 return false;
             }
+            //We need to cast it to it's concrete object type so I can retrieve name value
+            var consumer = (Resource)c.Consumer;
+
+            // is this an echo message?
+            if (message.StartsWith("{\"Relation\":\"http://api.sportingsolutions.com/rels/stream/echo\""))
+            {
+                EchoManager.ProcessEcho(consumerId);
+                c.Consumer.OnEchoReceived(new EchoReceivedArgs(consumer.Id,consumer.Name));
+                return true;
+            }
+
+
+            if (UDAPI.Configuration.VerboseLogging)
+                _logger.DebugFormat("Update arrived for consumerId={0}", consumerId);
 
             c.Add(message);
             EchoManager.ProcessEcho(consumerId);
-
+            c.Consumer.OnEchoReceived(new EchoReceivedArgs(consumer.Id,consumer.Name));
             return true;
         }
 
