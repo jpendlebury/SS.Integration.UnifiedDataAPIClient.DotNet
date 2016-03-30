@@ -103,6 +103,7 @@
     <Compile Include="Clients\RestErrorHelper.cs" />
     <Compile Include="Credentials.cs" />
     <Compile Include="EchoController.cs" />
+    <Compile Include="Events\EchoReceivedArgs.cs" />
     <Compile Include="Extensions\JsonHelper.cs" />
     <Compile Include="Interfaces\IDispatcher.cs" />
     <Compile Include="Interfaces\IEchoController.cs" />

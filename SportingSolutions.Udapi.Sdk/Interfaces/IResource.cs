@@ -62,6 +62,11 @@ namespace SportingSolutions.Udapi.Sdk.Interfaces
         event EventHandler StreamSynchronizationError;
 
         /// <summary>
+        ///     Event raised when a Echo has arrived.
+        /// </summary>
+        event EventHandler<EchoReceivedArgs> EchoReceived;
+
+        /// <summary>
         ///     Retrieves the current resource's snapshot
         /// </summary>
         /// <returns></returns>

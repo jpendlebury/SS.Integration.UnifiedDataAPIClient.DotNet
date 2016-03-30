@@ -184,6 +184,8 @@ namespace SportingSolutions.Udapi.Sdk.StreamingExample.Console.Udapi
             }
         }
 
+        public event EventHandler<EchoReceivedArgs> EchoReceived;
+
         public event EventHandler StreamSynchronizationError;
     }
 }

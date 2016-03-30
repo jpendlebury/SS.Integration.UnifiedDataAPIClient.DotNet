@@ -29,6 +29,8 @@ namespace SportingSolutions.Udapi.Sdk.Interfaces
 
         void OnStreamEvent(StreamEventArgs e);
 
+        void OnEchoReceived(EchoReceivedArgs e);
+
         void SendEcho();
     }
 }
